@@ -12,3 +12,11 @@ localhost:4000
 ```
 npm i
 ```
+
+# project env
+set env as per required 
+```
+ADAM_IP
+portPath
+baudRate
+```
