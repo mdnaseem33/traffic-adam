@@ -35,7 +35,7 @@ var portSerial = new SerialPort({
     }
 });
 const adamIP = process.env.ADAM_IP || "192.168.1.121";
-app.post('/digitaloutput/all/value', async (req, res) => {
+const adamController = async (req, res) => {
     try {
         res.send(`<?xml version="1.0" ?>
                     <ADAM-6050 status="{status}">
@@ -46,7 +46,10 @@ app.post('/digitaloutput/all/value', async (req, res) => {
     } catch (error) {
         console.log(error.message)
     }
-});
+};
+app.post('/digitaloutput/all/value', adamController);
+
+
 
 const adamRequest = async (req) => {
     try {
@@ -56,7 +59,6 @@ const adamRequest = async (req) => {
           };
         const data = new URLSearchParams(req.body).toString();
         const url = `http://${adamIP}/digitaloutput/all/value`;
-        
         axios.post(url, data, { headers }).then(function(response){
             console.log(JSON.stringify(response.data));
         }).catch(function(error){
@@ -89,4 +91,22 @@ const sendSerialData = async (req) => {
 
 const server = app.listen(port, () => {
     console.log(`listensing on port ${port}`);
+    const check = process.env.ADAM_RANDOM || 0
+    if(check == 1){
+        setInterval(() => {
+            const req = {
+                body: {}
+            };
+            const res = {
+                send : (str)=> {
+    
+                }
+            };
+            for(let i=0; i < 16; i++){
+                req.body[`DO${i}`] = Math.floor(Math.random() * 2);
+            }
+            adamController(req, res);
+          }, 2000);
+    }
+   
 })
